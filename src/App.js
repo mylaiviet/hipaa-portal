@@ -22,7 +22,7 @@ function App() {
             <Dashboard />
           </ProtectedRoute>
         } />
-        <Route path="/" element={<SignIn />} />
+        <Route path="/" element={<Auth />} />
       </Routes>
     </MedplumProvider>
   );
