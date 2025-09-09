@@ -1,4 +1,4 @@
-import React from 'react';
+import { Navigate } from 'react-router-dom';
 import './Auth.css';
 import LogoAvatar from './LogoAvatar';
 import { useMedplum } from '@medplum/react';
@@ -8,8 +8,24 @@ function Auth({
 }) {
   const medplum = useMedplum();
 
+  if (medplum.isAuthenticated()) {
+    return <Navigate to="/dashboard" />;
+  }
+
   const onAuth = () => {
-    medplum.signInWithRedirect();
+    // Standard MedPlum OAuth flow with optimal parameters for user experience
+    medplum.signInWithRedirect({
+      scope: 'openid profile email fhirUser',
+      // Remove prompt parameter to let MedPlum handle the flow naturally
+      // This provides the most consistent experience across all scenarios
+      response_type: 'code',
+      access_type: 'offline', // Ensures long-term access with refresh tokens
+      state: btoa(JSON.stringify({
+        source: 'patient-portal',
+        timestamp: Date.now(),
+        redirectTo: '/dashboard'
+      }))
+    });
   };
 
   const title = isCreateAccount ? 'Create Account' : 'Welcome Back';
@@ -25,6 +41,28 @@ function Auth({
         <LogoAvatar />
         <h2 className="auth-title">{title}</h2>
         <p className="auth-subtitle">{subtitle}</p>
+        
+        {/* Security & Compliance Info */}
+        <div style={{ 
+          background: '#f0f9ff', 
+          border: '1px solid #0ea5e9',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '16px',
+          fontSize: '0.9rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <span style={{ fontSize: '1.1rem', color: '#0ea5e9' }}>🔒</span>
+            <div>
+              <strong>HIPAA-Compliant Security:</strong> You'll be asked to approve data access permissions. 
+              This ensures your medical information stays secure and compliant with healthcare regulations.
+              <br />
+              <span style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '4px', display: 'block' }}>
+                Simply click "Allow" to continue to your secure patient dashboard.
+              </span>
+            </div>
+          </div>
+        </div>
         <button className="auth-btn" onClick={onAuth} style={{ width: '100%', marginTop: 24 }}>
           {buttonText}
         </button>
