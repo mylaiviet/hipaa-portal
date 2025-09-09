@@ -2,22 +2,27 @@ import React from 'react';
 import { MedplumProvider } from '@medplum/react';
 import { MedplumClient } from '@medplum/core';
 import { Routes, Route } from 'react-router-dom';
-import SignIn from './SignIn';
-import CreateAccount from './CreateAccount';
+import Auth from './Auth';
 import Dashboard from './Dashboard';
+import ProtectedRoute from './ProtectedRoute';
 
 const medplum = new MedplumClient({
   baseUrl: 'https://api.medplum.com/',
-  clientId: '5c34520f-fb1d-4d9c-9376-0c92c98396ed',
+  clientId: process.env.REACT_APP_MEDPLUM_CLIENT_ID,
 });
 
 function App() {
   return (
     <MedplumProvider medplum={medplum}>
       <Routes>
+        <Route path="/signin" element={<Auth />} />
+        <Route path="/create-account" element={<Auth isCreateAccount={true} />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
         <Route path="/" element={<SignIn />} />
-        <Route path="/create-account" element={<CreateAccount />} />
-        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </MedplumProvider>
   );
