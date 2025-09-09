@@ -38,19 +38,23 @@
 }
 
 .auth-avatar-logo {
+  width: 60px;
+  height: 60px;
   padding: 0;
-  background: #06808e;
-  border-radius: 20px;
+  background: transparent;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 18px;
 }
 
 .auth-logo-img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 20px;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 16px;
+  margin: 0 auto;
 }
 
 .auth-title {
